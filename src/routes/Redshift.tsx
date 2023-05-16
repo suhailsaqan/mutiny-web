@@ -13,7 +13,6 @@ import { MutinyChannel } from "@mutinywallet/mutiny-wasm";
 import mempoolTxUrl from "~/utils/mempoolTxUrl";
 import { Amount } from "~/components/Amount";
 import { getRedshifted, setRedshifted } from "~/utils/fakeLabels";
-import { Network } from "~/logic/mutinyWalletSetup";
 
 type ShiftOption = "utxo" | "lightning"
 
@@ -107,8 +106,6 @@ function RedshiftReport(props: { redshift: RedshiftResult, utxo: UtxoItem }) {
         setRedshifted(true, redshiftResource()?.output_utxo)
     })
 
-    const network = state.mutiny_wallet?.get_network() as Network;
-
 
     return (
         <VStack biggap>
@@ -144,7 +141,7 @@ function RedshiftReport(props: { redshift: RedshiftResult, utxo: UtxoItem }) {
                             <KV key="Outbound channel">
                                 <VStack>
                                     <pre class="whitespace-pre-wrap break-all">{redshiftResource().introduction_channel}</pre>
-                                    <a class="" href={mempoolTxUrl(redshiftResource().introduction_channel?.split(":")[0], network)} target="_blank" rel="noreferrer">
+                                    <a class="" href={mempoolTxUrl(redshiftResource().introduction_channel?.split(":")[0], "signet")} target="_blank" rel="noreferrer">
                                         View on mempool
                                     </a>
                                 </VStack>
@@ -153,7 +150,7 @@ function RedshiftReport(props: { redshift: RedshiftResult, utxo: UtxoItem }) {
                                 <KV key="Return channel">
                                     <VStack>
                                         <pre class="whitespace-pre-wrap break-all">{redshiftResource().output_channel}</pre>
-                                        <a class="" href={mempoolTxUrl(redshiftResource().output_channel?.split(":")[0], network)} target="_blank" rel="noreferrer">
+                                        <a class="" href={mempoolTxUrl(redshiftResource().output_channel?.split(":")[0], "signet")} target="_blank" rel="noreferrer">
                                             View on mempool
                                         </a>
 

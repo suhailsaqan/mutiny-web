@@ -1,5 +1,6 @@
 export function prettyPrintTime(ts: number) {
     const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
         year: 'numeric',
         month: 'short',
         day: 'numeric',

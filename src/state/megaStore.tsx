@@ -46,7 +46,8 @@ export const Provider: ParentComponent = (props) => {
         deleting: false,
         user_status: undefined as UserStatus,
         scan_result: undefined as ParsedParams | undefined,
-        price: 0,
+        // TODO: wire this up to real price once we have caching
+        price: 30000,
         has_backed_up: localStorage.getItem("has_backed_up") === "true",
         balance: undefined as MutinyBalance | undefined,
         last_sync: undefined as number | undefined,
@@ -86,9 +87,7 @@ export const Provider: ParentComponent = (props) => {
             try {
                 setState({ wallet_loading: true })
                 const mutinyWallet = await setupMutinyWallet(settings)
-                // Get balance optimistically
-                const balance = await mutinyWallet.get_balance();
-                setState({ mutiny_wallet: mutinyWallet, wallet_loading: false, balance })
+                setState({ mutiny_wallet: mutinyWallet, wallet_loading: false })
             } catch (e) {
                 console.error(e)
             }
@@ -112,9 +111,8 @@ export const Provider: ParentComponent = (props) => {
                 if (state.mutiny_wallet && !state.is_syncing) {
                     setState({ is_syncing: true })
                     await state.mutiny_wallet?.sync()
-                    const newBalance = await state.mutiny_wallet?.get_balance();
-                    const price = await state.mutiny_wallet?.get_bitcoin_price();
-                    setState({ balance: newBalance, last_sync: Date.now(), price: price || 0 })
+                    const balance = await state.mutiny_wallet?.get_balance();
+                    setState({ balance, last_sync: Date.now() })
                 }
             } catch (e) {
                 console.error(e);

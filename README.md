@@ -1,9 +1,5 @@
 ### Running Mutiny Web
 
-### Dependencies
-
-- pnpm > 8
-
 ```
 pnpm install
 pnpm run dev
