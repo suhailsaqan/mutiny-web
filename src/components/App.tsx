@@ -2,7 +2,6 @@ import logo from "~/assets/icons/mutiny-logo.svg";
 import { DefaultMain, SafeArea, VStack, Card } from "~/components/layout";
 import BalanceBox, { LoadingShimmer } from "~/components/BalanceBox";
 import NavBar from "~/components/NavBar";
-import ReloadPrompt from "~/components/Reload";
 import { A } from "solid-start";
 import { OnboardWarning } from "~/components/OnboardWarning";
 import { CombinedActivity } from "./Activity";
@@ -41,7 +40,6 @@ export default function App() {
                 </header>
                 <Show when={!state.wallet_loading}>
                     <OnboardWarning />
-                    <ReloadPrompt />
                 </Show>
                 <BalanceBox loading={state.wallet_loading} />
                 <Card title="Activity">
