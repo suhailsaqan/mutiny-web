@@ -1,12 +1,26 @@
 import { Dialog } from "@kobalte/core";
-import { ParentComponent, createSignal } from "solid-js";
+import { ParentComponent, createSignal, JSXElement } from "solid-js";
 import { DIALOG_CONTENT, DIALOG_POSITIONER, OVERLAY } from "./DetailsModal";
 import { ModalCloseButton, SmallHeader } from "./layout";
 import { ExternalLink } from "./layout/ExternalLink";
+import help from "~/assets/icons/help.svg";
 
-export function FeesModal() {
+export function FeesModal(props: { icon?: boolean }) {
     return (
-        <MoreInfoModal title="What's with the fees?" linkText="Why?">
+        <MoreInfoModal
+            title="What's with the fees?"
+            linkText={
+                props.icon ? (
+                    <img
+                        src={help}
+                        alt="help"
+                        class="w-[16px] h-[16px] cursor-pointer"
+                    />
+                ) : (
+                    "Why?"
+                )
+            }
+        >
             <p>
                 Mutiny is a self-custodial wallet. To initiate a lightning
                 payment we must open a lightning channel, which requires a
@@ -27,7 +41,7 @@ export function FeesModal() {
 }
 
 export const MoreInfoModal: ParentComponent<{
-    linkText: string;
+    linkText: string | JSXElement;
     title: string;
 }> = (props) => {
     const [open, setOpen] = createSignal(false);

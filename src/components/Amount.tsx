@@ -15,9 +15,10 @@ export function Amount(props: {
     amountSats: bigint | number | undefined;
     showFiat?: boolean;
     loading?: boolean;
-    centered?: boolean;
-    icon?: "lightning" | "chain";
     whiteBg?: boolean;
+    align?: "left" | "center" | "right";
+    icon?: "lightning" | "chain" | "plus" | "minus";
+    size?: "small" | "large";
 }) {
     const [state, _] = useMegaStore();
 
@@ -28,7 +29,9 @@ export function Amount(props: {
         <div
             class="flex flex-col gap-1"
             classList={{
-                "items-center": props.centered
+                "items-start": props.align === "left",
+                "items-center": props.align === "center",
+                "items-end": props.align === "right"
             }}
         >
             <div class="flex gap-2 items-center">
@@ -39,28 +42,74 @@ export function Amount(props: {
                     <img src={chain} alt="chain" class="h-[18px]" />
                 </Show>
                 <h1
-                    class="text-2xl font-light"
+                    class="font-light text-right"
                     classList={{
-                        "text-black": props.whiteBg
+                        "text-black": props.whiteBg,
+                        "text-base": !props.size,
+                        "text-sm": props.size === "small",
+                        "text-2xl": props.size === "large"
                     }}
                 >
+                    <Show when={props.icon === "plus"}>
+                        <span>+</span>
+                    </Show>
+                    <Show when={props.icon === "minus"}>
+                        <span>-</span>
+                    </Show>
                     {props.loading
                         ? "..."
                         : prettyPrintAmount(props.amountSats)}
                     &nbsp;
-                    <span class="text-base font-light">SATS</span>
+                    <span
+                        class="font-light"
+                        classList={{
+                            "text-base": !props.size,
+                            "text-sm": props.size === "small",
+                            "text-2xl": props.size === "large"
+                        }}
+                    >
+                        <Show
+                            when={
+                                props.amountSats && Number(props.amountSats) > 1
+                            }
+                        >
+                            sats
+                        </Show>
+                        <Show
+                            when={
+                                props.amountSats &&
+                                Number(props.amountSats) === 1
+                            }
+                        >
+                            sat
+                        </Show>
+                    </span>
                 </h1>
             </div>
             <Show when={props.showFiat}>
                 <h2
-                    class="text-sm font-light"
+                    class="font-light text-white/70"
                     classList={{
                         "text-black": props.whiteBg,
-                        "text-white/70": !props.whiteBg
+                        "text-white/70": !props.whiteBg,
+                        "text-sm": !props.size,
+                        "text-xs": props.size === "small",
+                        "text-base": props.size === "large"
                     }}
                 >
-                    &#8776; {props.loading ? "..." : amountInUsd()}&nbsp;
-                    <span class="text-sm">USD</span>
+                    ~{props.loading ? "..." : amountInUsd()}
+                    <Show when={props.size !== "small"}>
+                        <span>&nbsp;</span>
+                    </Show>
+                    <span
+                        classList={{
+                            "text-sm": !props.size,
+                            "text-xs": props.size === "small",
+                            "text-base": props.size === "large"
+                        }}
+                    >
+                        USD
+                    </span>
                 </h2>
             </Show>
         </div>

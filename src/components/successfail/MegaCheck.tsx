@@ -1,4 +1,4 @@
-import megacheck from "~/assets/icons/megacheck.png";
+import megacheck from "~/assets/icons/megacheck.svg";
 
 export function MegaCheck() {
     return (

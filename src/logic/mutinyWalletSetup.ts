@@ -28,7 +28,8 @@ export function getExistingSettings(): MutinyWalletSettingStrings {
     const lsp =
         localStorage.getItem("MUTINY_SETTINGS_lsp") || import.meta.env.VITE_LSP;
     const auth =
-        localStorage.getItem("MUTINY_SETTINGS_auth") || import.meta.env.VITE_AUTH;
+        localStorage.getItem("MUTINY_SETTINGS_auth") ||
+        import.meta.env.VITE_AUTH;
 
     return { network, proxy, esplora, rgs, lsp, auth };
 }
@@ -113,9 +114,8 @@ export async function setupMutinyWallet(
     await initWaila();
 
     console.log("Starting setup...");
-    const { network, proxy, esplora, rgs, lsp, auth } = await setAndGetMutinySettings(
-        settings
-    );
+    const { network, proxy, esplora, rgs, lsp, auth } =
+        await setAndGetMutinySettings(settings);
     console.log("Initializing Mutiny Manager");
     console.log("Using network", network);
     console.log("Using proxy", proxy);

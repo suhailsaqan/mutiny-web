@@ -29,8 +29,8 @@ import { StyledRadioGroup } from "~/components/layout/Radio";
 import { ParsedParams, toParsedParams } from "./Scanner";
 import { showToast } from "~/components/Toaster";
 import eify from "~/utils/eify";
-import megacheck from "~/assets/icons/megacheck.png";
-import megaex from "~/assets/icons/megaex.png";
+import { MegaCheck } from "~/components/successfail/MegaCheck";
+import { MegaEx } from "~/components/successfail/MegaEx";
 import mempoolTxUrl from "~/utils/mempoolTxUrl";
 import { BackLink } from "~/components/layout/BackLink";
 import { useNavigate } from "solid-start";
@@ -43,6 +43,7 @@ import { Network } from "~/logic/mutinyWalletSetup";
 import { SuccessModal } from "~/components/successfail/SuccessModal";
 import { ExternalLink } from "~/components/layout/ExternalLink";
 import { InfoBox } from "~/components/InfoBox";
+import { FeesModal } from "~/components/MoreInfoModal";
 
 export type SendSource = "lightning" | "onchain";
 
@@ -388,6 +389,7 @@ export default function Send() {
             const trimText = text.trim();
             setFieldDestination(trimText);
             parsePaste(trimText);
+            parsePaste(trimText);
         } catch (e) {
             console.error(e);
         }
@@ -560,10 +562,7 @@ export default function Send() {
                     </Show>
                     <LargeHeader>Send Bitcoin</LargeHeader>
                     <SuccessModal
-                        title={
-                            sentDetails()?.amount ? "Sent" : "Payment Failed"
-                        }
-                        confirmText={sentDetails()?.amount ? "Nice" : "Too Bad"}
+                        confirmText={sentDetails()?.amount ? "Nice" : "Home"}
                         open={!!sentDetails()}
                         setOpen={(open: boolean) => {
                             if (!open) setSentDetails(undefined);
@@ -575,26 +574,53 @@ export default function Send() {
                     >
                         <Switch>
                             <Match when={sentDetails()?.failure_reason}>
-                                <img
-                                    src={megaex}
-                                    alt="fail"
-                                    class="w-1/2 mx-auto max-w-[50vh]"
-                                />
-                                <p class="text-xl font-light py-2 px-4 rounded-xl bg-white/10">
-                                    {sentDetails()?.failure_reason}
-                                </p>
+                                <MegaEx />
+                                <LargeHeader centered>
+                                    {sentDetails()?.amount
+                                        ? "Payment Sent"
+                                        : ""}
+                                </LargeHeader>
+                                <span>
+                                    <p class="text-xl text-center font-extrabold py-2 px-4 rounded-xl leading-[22px]">
+                                        {sentDetails()?.failure_reason}
+                                    </p>
+                                    {/*TODO: add failure hint logic for different failure conditions*/}
+                                    {/*<p class="text-center leading-[19px]">
+                                        failure hint
+                                    </p>*/}
+                                </span>
                             </Match>
                             <Match when={true}>
-                                <img
-                                    src={megacheck}
-                                    alt="success"
-                                    class="w-1/2 mx-auto max-w-[50vh]"
-                                />
+                                <MegaCheck />
+                                <LargeHeader centered>
+                                    {sentDetails()?.amount
+                                        ? "Payment Initiated"
+                                        : ""}
+                                </LargeHeader>
                                 <Amount
                                     amountSats={sentDetails()?.amount}
                                     showFiat
-                                    centered
+                                    align="center"
+                                    size="large"
+                                    icon="minus"
                                 />
+                                <div class="w-[65px] h-[1px] bg-m-grey-400" />
+                                <div class="flex flex-row items-start gap-[12px]">
+                                    <p class="text-m-grey-400 text-[14px] leading-[17px] text-center">
+                                        Transaction Fees
+                                    </p>
+                                    <div class="flex items-start gap-[4px]">
+                                        <Amount
+                                            amountSats={feeEstimate()?.toString()}
+                                            align="right"
+                                            size="small"
+                                            showFiat
+                                        />
+                                        <div class="flex items-start py-[1px]">
+                                            <FeesModal icon />
+                                        </div>
+                                    </div>
+                                </div>
                                 <Show when={sentDetails()?.txid}>
                                     <ExternalLink
                                         href={mempoolTxUrl(
@@ -602,7 +628,7 @@ export default function Send() {
                                             network
                                         )}
                                     >
-                                        View Transaction
+                                        View Payment details
                                     </ExternalLink>
                                 </Show>
                             </Match>

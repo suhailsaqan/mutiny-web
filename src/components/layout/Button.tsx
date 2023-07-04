@@ -12,9 +12,9 @@ const button = cva(
             intent: {
                 active: "bg-white text-black border border-white hover:text-[#3B6CCC]",
                 inactive:
-                    "bg-black text-white border border-white hover:text-[#3B6CCC]",
+                    "bg-transparent text-white border border-white hover:text-[#3B6CCC]",
                 glowy: "bg-black/10 shadow-xl text-white border border-m-blue hover:m-blue-dark hover:text-m-blue",
-                blue: "bg-m-blue text-white shadow-inner-button hover:bg-m-blue-dark text-shadow-button",
+                blue: "bg-m-blue-400 text-white shadow-subtle-bevel hover:bg-m-blue-dark text-shadow-button",
                 red: "bg-m-red text-white shadow-inner-button hover:bg-m-red-dark text-shadow-button",
                 green: "bg-m-green text-white shadow-inner-button hover:bg-m-green-dark text-shadow-button"
             },

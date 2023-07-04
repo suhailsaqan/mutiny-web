@@ -394,14 +394,8 @@ export default function Receive() {
                                 />
                             </SimpleDialog>
                         </Match>
-                        <Match
-                            when={
-                                receiveState() === "paid" &&
-                                paidState() === "lightning_paid"
-                            }
-                        >
+                        <Match when={receiveState() === "paid"}>
                             <SuccessModal
-                                title="Payment Received"
                                 open={!!paidState()}
                                 setOpen={(open: boolean) => {
                                     if (!open) clearAll();
@@ -412,45 +406,82 @@ export default function Receive() {
                                 }}
                             >
                                 <MegaCheck />
-                                <FeeExplanation fee={lspFee()} />
+                                <LargeHeader centered>
+                                    {receiveState() === "paid" &&
+                                    paidState() === "lightning_paid"
+                                        ? "Payment Received"
+                                        : "Payment Initiated"}
+                                </LargeHeader>
                                 <Amount
-                                    amountSats={paymentInvoice()?.amount_sats}
+                                    amountSats={
+                                        receiveState() === "paid" &&
+                                        paidState() === "lightning_paid"
+                                            ? paymentInvoice()?.amount_sats
+                                            : paymentTx()?.received
+                                    }
                                     showFiat
-                                    centered
+                                    align="center"
+                                    size="large"
+                                    icon="plus"
                                 />
-                            </SuccessModal>
-                        </Match>
-                        <Match
-                            when={
-                                receiveState() === "paid" &&
-                                paidState() === "onchain_paid"
-                            }
-                        >
-                            <SuccessModal
-                                title="Payment Received"
-                                open={!!paidState()}
-                                setOpen={(open: boolean) => {
-                                    if (!open) clearAll();
-                                }}
-                                onConfirm={() => {
-                                    clearAll();
-                                    navigate("/");
-                                }}
-                            >
-                                <MegaCheck />
-                                <Amount
-                                    amountSats={paymentTx()?.received}
-                                    showFiat
-                                    centered
-                                />
-                                <ExternalLink
-                                    href={mempoolTxUrl(
-                                        paymentTx()?.txid,
-                                        network
-                                    )}
+                                <div class="w-[65px] h-[1px] bg-m-grey-400"></div>
+                                <div class="flex flex-row items-start gap-[12px]">
+                                    <Show
+                                        when={
+                                            receiveState() === "paid" &&
+                                            paidState() === "lightning_paid"
+                                        }
+                                    >
+                                        <p class="text-m-grey-400 text-[14px] leading-[17px] text-center">
+                                            Fee
+                                        </p>
+                                        <div class="flex items-start gap-[4px]">
+                                            <Amount
+                                                amountSats={lspFee()}
+                                                align="right"
+                                                size="small"
+                                                showFiat
+                                            />
+                                            <div class="flex items-start py-[1px]">
+                                                <FeesModal icon />
+                                            </div>
+                                        </div>
+                                    </Show>
+                                    <Show
+                                        when={
+                                            receiveState() === "paid" &&
+                                            paidState() === "onchain_paid"
+                                        }
+                                    >
+                                        <p class="text-m-grey-400 text-[14px] leading-[17px] text-center">
+                                            ETA
+                                        </p>
+                                        <div class="flex items-start gap-[4px]">
+                                            {Number(
+                                                paymentTx()?.confirmation_time
+                                            )}
+                                            <div class="flex items-start py-[1px]">
+                                                <FeesModal icon />
+                                            </div>
+                                        </div>
+                                    </Show>
+                                </div>
+                                {/*TODO: add internal payment detail page* for lightning*/}
+                                <Show
+                                    when={
+                                        receiveState() === "paid" &&
+                                        paidState() === "onchain_paid"
+                                    }
                                 >
-                                    View Transaction
-                                </ExternalLink>
+                                    <ExternalLink
+                                        href={mempoolTxUrl(
+                                            paymentTx()?.txid,
+                                            network
+                                        )}
+                                    >
+                                        View payment details
+                                    </ExternalLink>
+                                </Show>
                             </SuccessModal>
                         </Match>
                     </Switch>

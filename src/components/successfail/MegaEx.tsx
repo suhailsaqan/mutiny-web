@@ -1,4 +1,4 @@
-import megaex from "~/assets/icons/megaex.png";
+import megaex from "~/assets/icons/megaex.svg";
 
 export function MegaEx() {
     return (
