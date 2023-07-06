@@ -56,6 +56,7 @@ type SentDetails = {
     destination?: string;
     txid?: string;
     failure_reason?: string;
+    fee_estimate?: string;
 };
 
 export function MethodChooser(props: {
@@ -278,10 +279,9 @@ export default function Send() {
             try {
                 // If max we want to use the sweep fee estimator
                 if (isMax()) {
-                    return (
-                        state.mutiny_wallet?.estimate_sweep_tx_fee(
+                    return state.mutiny_wallet?.estimate_sweep_tx_fee(
                         address()!
-                    ));
+                    );
                 }
 
                 return state.mutiny_wallet?.estimate_tx_fee(
@@ -338,7 +338,6 @@ export default function Send() {
             } else {
                 setAmountSats(source.amount_sats || 0n);
                 setSource("onchain");
-                console.log('fee', feeEstimate(), feeEstimate()?.toString());
             }
             // Return the source just to trigger `decodedDestination` as not undefined
             return source;
@@ -506,6 +505,7 @@ export default function Send() {
                     sentDetails.amount = amountSats();
                     sentDetails.destination = address();
                     sentDetails.txid = txid;
+                    sentDetails.fee_estimate = feeEstimate()?.toString();
                 } else {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     const txid = await state.mutiny_wallet?.send_to_address(
@@ -516,10 +516,10 @@ export default function Send() {
                     sentDetails.amount = amountSats();
                     sentDetails.destination = address();
                     sentDetails.txid = txid;
+                    sentDetails.fee_estimate = feeEstimate()?.toString();
                 }
             }
             setSentDetails(sentDetails as SentDetails);
-            console.log('fee 2', feeEstimate(), feeEstimate()?.toString());
             clearAll();
         } catch (e) {
             const error = eify(e);
@@ -614,7 +614,7 @@ export default function Send() {
                                     </p>
                                     <div class="flex items-start gap-[4px]">
                                         <Amount
-                                            amountSats={feeEstimate()?.toString()}
+                                            amountSats={sentDetails()?.fee_estimate}
                                             align="right"
                                             size="small"
                                             showFiat
