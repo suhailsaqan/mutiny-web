@@ -278,9 +278,10 @@ export default function Send() {
             try {
                 // If max we want to use the sweep fee estimator
                 if (isMax()) {
-                    return state.mutiny_wallet?.estimate_sweep_tx_fee(
+                    return (
+                        state.mutiny_wallet?.estimate_sweep_tx_fee(
                         address()!
-                    );
+                    ));
                 }
 
                 return state.mutiny_wallet?.estimate_tx_fee(
@@ -544,6 +545,8 @@ export default function Send() {
     const maxAmountSats = createMemo(() => {
         return source() === "onchain" ? maxOnchain() : undefined;
     });
+
+    console.log('fee', feeEstimate(), feeEstimate()?.toString());
 
     return (
         <MutinyWalletGuard>
