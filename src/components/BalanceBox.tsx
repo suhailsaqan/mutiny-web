@@ -45,7 +45,7 @@ export default function BalanceBox(props: { loading?: boolean }) {
                         amountSats={state.balance?.lightning || 0}
                         showFiat
                         icon="lightning"
-                        size="large"
+                        size="xl"
                     />
                 </Show>
                 <hr class="my-2 border-m-grey-750" />
@@ -55,7 +55,7 @@ export default function BalanceBox(props: { loading?: boolean }) {
                             amountSats={totalOnchain()}
                             showFiat
                             icon="chain"
-                            size="large"
+                            size="xl"
                         />
                         <div class="flex flex-col items-end gap-1 justify-between">
                             <Show when={state.balance?.unconfirmed != 0n}>

@@ -18,7 +18,7 @@ export function Amount(props: {
     whiteBg?: boolean;
     align?: "left" | "center" | "right";
     icon?: "lightning" | "chain" | "plus" | "minus";
-    size?: "small" | "large";
+    size?: "small" | "large" | "xl";
     green?: boolean
 }) {
     const [state, _] = useMegaStore();
@@ -46,9 +46,9 @@ export function Amount(props: {
                     class="font-light text-right"
                     classList={{
                         "text-black": props.whiteBg,
-                        "text-base": !props.size,
                         "text-sm": props.size === "small",
-                        "text-2xl": props.size === "large",
+                        "text-xl": props.size === "large",
+                        "text-2xl": props.size === "xl",
                         "text-m-green": props.green
                     }}
                 >
@@ -63,11 +63,10 @@ export function Amount(props: {
                         : prettyPrintAmount(props.amountSats)}
                     &nbsp;
                     <span
-                        class="font-light"
+                        class="font-light text-base"
                         classList={{
-                            "text-base": !props.size,
                             "text-sm": props.size === "small",
-                            "text-2xl": props.size === "large"
+                            "text-lg": props.size === "xl",
                         }}
                     >
                         <Show
@@ -75,7 +74,7 @@ export function Amount(props: {
                                 props.amountSats && Number(props.amountSats) > 1
                             }
                         >
-                            {props.size === "large"
+                            {props.size === "xl"
                                 ? "SATS"
                                 : "sats"
                             }
@@ -86,7 +85,7 @@ export function Amount(props: {
                                 Number(props.amountSats) === 1
                             }
                         >
-                            {props.size === "large"
+                            {props.size === "xl"
                                 ? "SAT"
                                 : "sat"
                             }
@@ -102,11 +101,12 @@ export function Amount(props: {
                         "text-white/70": !props.whiteBg,
                         "text-sm": !props.size,
                         "text-xs": props.size === "small",
-                        "text-base": props.size === "large"
+                        "text-base": props.size === "large",
+                        "text-lg": props.size === "xl"
                     }}
                 >
                     ~
-                    <Show when={props.size === "large"}>
+                    <Show when={props.size === "xl"}>
                         <span>&nbsp;</span>
                     </Show>
                     {props.loading ? "..." : amountInUsd()}
@@ -114,8 +114,8 @@ export function Amount(props: {
                         <span>&nbsp;</span>
                     </Show>
                     <span
+                        class="text-sm"
                         classList={{
-                            "text-sm": !props.size,
                             "text-xs": props.size === "small",
                             "text-base": props.size === "large"
                         }}
