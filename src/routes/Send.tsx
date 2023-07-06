@@ -338,6 +338,7 @@ export default function Send() {
             } else {
                 setAmountSats(source.amount_sats || 0n);
                 setSource("onchain");
+                console.log('fee', feeEstimate(), feeEstimate()?.toString());
             }
             // Return the source just to trigger `decodedDestination` as not undefined
             return source;
@@ -518,6 +519,7 @@ export default function Send() {
                 }
             }
             setSentDetails(sentDetails as SentDetails);
+            console.log('fee 2', feeEstimate(), feeEstimate()?.toString());
             clearAll();
         } catch (e) {
             const error = eify(e);
@@ -545,8 +547,6 @@ export default function Send() {
     const maxAmountSats = createMemo(() => {
         return source() === "onchain" ? maxOnchain() : undefined;
     });
-
-    console.log('fee', feeEstimate(), feeEstimate()?.toString());
 
     return (
         <MutinyWalletGuard>
