@@ -19,6 +19,7 @@ export function Amount(props: {
     align?: "left" | "center" | "right";
     icon?: "lightning" | "chain" | "plus" | "minus";
     size?: "small" | "large";
+    green?: boolean
 }) {
     const [state, _] = useMegaStore();
 
@@ -47,7 +48,8 @@ export function Amount(props: {
                         "text-black": props.whiteBg,
                         "text-base": !props.size,
                         "text-sm": props.size === "small",
-                        "text-2xl": props.size === "large"
+                        "text-2xl": props.size === "large",
+                        "text-m-green": props.green
                     }}
                 >
                     <Show when={props.icon === "plus"}>
@@ -73,7 +75,10 @@ export function Amount(props: {
                                 props.amountSats && Number(props.amountSats) > 1
                             }
                         >
-                            sats
+                            {props.size === "large"
+                                ? "SATS"
+                                : "sats"
+                            }
                         </Show>
                         <Show
                             when={
@@ -81,7 +86,10 @@ export function Amount(props: {
                                 Number(props.amountSats) === 1
                             }
                         >
-                            sat
+                            {props.size === "large"
+                                ? "SAT"
+                                : "sat"
+                            }
                         </Show>
                     </span>
                 </h1>
@@ -97,7 +105,11 @@ export function Amount(props: {
                         "text-base": props.size === "large"
                     }}
                 >
-                    ~{props.loading ? "..." : amountInUsd()}
+                    ~
+                    <Show when={props.size === "large"}>
+                        <span>&nbsp;</span>
+                    </Show>
+                    {props.loading ? "..." : amountInUsd()}
                     <Show when={props.size !== "small"}>
                         <span>&nbsp;</span>
                     </Show>

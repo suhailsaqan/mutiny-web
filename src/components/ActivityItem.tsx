@@ -16,6 +16,7 @@ import { timeAgo } from "~/utils/prettyPrintTime";
 import { generateGradient } from "~/utils/gradientHash";
 import { useMegaStore } from "~/state/megaStore";
 import { Contact } from "@mutinywallet/mutiny-wasm";
+import { Amount } from "~/components/Amount";
 
 export const ActivityAmount: ParentComponent<{
     amount: string;
@@ -49,17 +50,13 @@ export const ActivityAmount: ParentComponent<{
                 "items-center": props.center
             }}
         >
-            <div
-                class="text-base"
-                classList={{ "text-m-green": props.positive }}
-            >
-                {props.positive && "+ "}
-                {prettyPrint()}&nbsp;<span class="text-sm">SATS</span>
-            </div>
-            <div class="text-sm text-neutral-500">
-                &#8776;&nbsp;{amountInUsd()}&nbsp;
-                <span class="text-sm">USD</span>
-            </div>
+        <Amount
+            amountSats={props.amount}
+            align="right"
+            icon={props.positive ? "plus" : ""}
+            showFiat
+            green={props.positive ? true : false}
+        />
         </div>
     );
 };
