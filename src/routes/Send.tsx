@@ -26,7 +26,6 @@ import { Scan } from "~/assets/svg/Scan";
 import { useMegaStore } from "~/state/megaStore";
 import { Contact, MutinyInvoice } from "@mutinywallet/mutiny-wasm";
 import { StyledRadioGroup } from "~/components/layout/Radio";
-import { ParsedParams, toParsedParams } from "./Scanner";
 import { showToast } from "~/components/Toaster";
 import eify from "~/utils/eify";
 import { MegaCheck } from "~/components/successfail/MegaCheck";
@@ -44,6 +43,8 @@ import { SuccessModal } from "~/components/successfail/SuccessModal";
 import { ExternalLink } from "~/components/layout/ExternalLink";
 import { InfoBox } from "~/components/InfoBox";
 import { FeesModal } from "~/components/MoreInfoModal";
+import { useI18n } from "~/i18n/context";
+import { ParsedParams, toParsedParams } from "~/logic/waila";
 
 export type SendSource = "lightning" | "onchain";
 
@@ -195,6 +196,7 @@ function DestinationShower(props: {
 export default function Send() {
     const [state, actions] = useMegaStore();
     const navigate = useNavigate();
+    const i18n = useI18n();
 
     // These can only be set by the user
     const [fieldDestination, setFieldDestination] = createSignal("");
@@ -563,7 +565,7 @@ export default function Send() {
                             title="Start Over"
                         />
                     </Show>
-                    <LargeHeader>Send Bitcoin</LargeHeader>
+                    <LargeHeader>{i18n.t("send_bitcoin")}</LargeHeader>
                     <SuccessModal
                         confirmText={sentDetails()?.amount ? "Nice" : "Home"}
                         open={!!sentDetails()}
@@ -631,7 +633,7 @@ export default function Send() {
                                             network
                                         )}
                                     >
-                                        View Payment details
+                                        {i18n.t("view_transaction")}
                                     </ExternalLink>
                                 </Show>
                             </Match>
@@ -663,7 +665,7 @@ export default function Send() {
                                             lnurl={lnurlp()}
                                             clearAll={clearAll}
                                         />
-                                        <SmallHeader>Private tags</SmallHeader>
+                                        <SmallHeader>{i18n.t("private_tags")}</SmallHeader>
                                         <TagEditor
                                             selectedValues={selectedContacts()}
                                             setSelectedValues={

@@ -1,7 +1,6 @@
 /* @refresh reload */
 
 import initMutinyWallet, { MutinyWallet } from "@mutinywallet/mutiny-wasm";
-import initWaila from "@mutinywallet/waila-wasm";
 
 export type Network = "bitcoin" | "testnet" | "regtest" | "signet";
 export type MutinyWalletSettingStrings = {
@@ -11,6 +10,8 @@ export type MutinyWalletSettingStrings = {
     rgs?: string;
     lsp?: string;
     auth?: string;
+    subscriptions?: string;
+    storage?: string;
 };
 
 export function getExistingSettings(): MutinyWalletSettingStrings {
@@ -30,16 +31,24 @@ export function getExistingSettings(): MutinyWalletSettingStrings {
     const auth =
         localStorage.getItem("MUTINY_SETTINGS_auth") ||
         import.meta.env.VITE_AUTH;
+    const subscriptions =
+        localStorage.getItem("MUTINY_SETTINGS_subscriptions") ||
+        import.meta.env.VITE_SUBSCRIPTIONS;
+    const storage =
+        localStorage.getItem("MUTINY_SETTINGS_storage") ||
+        import.meta.env.VITE_STORAGE;
 
-    return { network, proxy, esplora, rgs, lsp, auth };
+    return { network, proxy, esplora, rgs, lsp, auth, subscriptions, storage };
 }
 
 export async function setAndGetMutinySettings(
     settings?: MutinyWalletSettingStrings
 ): Promise<MutinyWalletSettingStrings> {
-    let { network, proxy, esplora, rgs, lsp, auth } = settings || {};
+    let { network, proxy, esplora, rgs, lsp, auth, subscriptions, storage } =
+        settings || {};
 
     const existingSettings = getExistingSettings();
+
     try {
         network = network || existingSettings.network;
         proxy = proxy || existingSettings.proxy;
@@ -47,6 +56,8 @@ export async function setAndGetMutinySettings(
         rgs = rgs || existingSettings.rgs;
         lsp = lsp || existingSettings.lsp;
         auth = auth || existingSettings.auth;
+        subscriptions = subscriptions || existingSettings.subscriptions;
+        storage = storage || existingSettings.storage;
 
         if (!network || !proxy || !esplora) {
             throw new Error(
@@ -65,8 +76,14 @@ export async function setAndGetMutinySettings(
         rgs && localStorage.setItem("MUTINY_SETTINGS_rgs", rgs);
         lsp && localStorage.setItem("MUTINY_SETTINGS_lsp", lsp);
         auth && localStorage.setItem("MUTINY_SETTINGS_auth", auth);
+        subscriptions &&
+            localStorage.setItem(
+                "MUTINY_SETTINGS_subscriptions",
+                subscriptions
+            );
+        storage && localStorage.setItem("MUTINY_SETTINGS_storage", storage);
 
-        return { network, proxy, esplora, rgs, lsp, auth };
+        return { network, proxy, esplora, rgs, lsp, auth, subscriptions, storage };
     } catch (error) {
         console.error(error);
         throw error;
@@ -93,9 +110,8 @@ export async function checkForWasm() {
     }
 }
 
-export async function setupMutinyWallet(
-    settings?: MutinyWalletSettingStrings
-): Promise<MutinyWallet> {
+export async function doubleInitDefense() {
+    console.log("Starting init...");
     // Ultimate defense against getting multiple instances of the wallet running.
     // If we detect that the wallet has already been initialized in this session, we'll reload the page.
     // A successful stop of the wallet in onCleanup will clear this flag
@@ -108,13 +124,19 @@ export async function setupMutinyWallet(
         sessionStorage.removeItem("MUTINY_WALLET_INITIALIZED");
         window.location.reload();
     }
+}
 
+export async function initializeWasm() {
+    // Actually intialize the WASM, this should be the first thing that requires the WASM blob to be downloaded
     await initMutinyWallet();
-    // Might as well init waila while we're at it
-    await initWaila();
+}
 
+export async function setupMutinyWallet(
+    settings?: MutinyWalletSettingStrings,
+    password?: string
+): Promise<MutinyWallet> {
     console.log("Starting setup...");
-    const { network, proxy, esplora, rgs, lsp, auth } =
+    const { network, proxy, esplora, rgs, lsp, auth, subscriptions, storage } =
         await setAndGetMutinySettings(settings);
     console.log("Initializing Mutiny Manager");
     console.log("Using network", network);
@@ -123,9 +145,11 @@ export async function setupMutinyWallet(
     console.log("Using rgs address", rgs);
     console.log("Using lsp address", lsp);
     console.log("Using auth address", auth);
+    console.log("Using subscriptions address", subscriptions);
+    console.log("Using storage address", storage);
     const mutinyWallet = await new MutinyWallet(
         // Password
-        "",
+        password ? password : undefined,
         // Mnemonic
         undefined,
         proxy,
@@ -134,6 +158,8 @@ export async function setupMutinyWallet(
         rgs,
         lsp,
         auth,
+        subscriptions,
+        storage,
         // Do not connect peers
         undefined
     );

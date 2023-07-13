@@ -23,6 +23,7 @@ import { generateGradient } from "~/utils/gradientHash";
 import close from "~/assets/icons/close.svg";
 import { A } from "solid-start";
 import down from "~/assets/icons/down.svg";
+import { DecryptDialog } from "../DecryptDialog";
 
 export { Button, ButtonLink, Linkify };
 
@@ -35,7 +36,7 @@ export const SmallHeader: ParentComponent<{ class?: string }> = (props) => {
 };
 
 export const Card: ParentComponent<{
-    title?: string;
+    title?: string | null;
     titleElement?: JSX.Element;
 }> = (props) => {
     return (
@@ -165,6 +166,7 @@ export const MutinyWalletGuard: ParentComponent = (props) => {
             <Show when={state.mutiny_wallet && !state.wallet_loading}>
                 {props.children}
             </Show>
+            <DecryptDialog />
         </Suspense>
     );
 };
@@ -336,7 +338,7 @@ export function ModalCloseButton() {
     );
 }
 
-export const SIMPLE_OVERLAY = "fixed inset-0 z-50 bg-black/70 backdrop-blur-md";
+export const SIMPLE_OVERLAY = "fixed inset-0 z-50 bg-black/20 backdrop-blur-md";
 export const SIMPLE_DIALOG_POSITIONER =
     "fixed inset-0 z-50 flex items-center justify-center";
 export const SIMPLE_DIALOG_CONTENT =
@@ -345,10 +347,13 @@ export const SIMPLE_DIALOG_CONTENT =
 export const SimpleDialog: ParentComponent<{
     title: string;
     open: boolean;
-    setOpen: (open: boolean) => void;
+    setOpen?: (open: boolean) => void;
 }> = (props) => {
     return (
-        <Dialog.Root open={props.open} onOpenChange={props.setOpen}>
+        <Dialog.Root
+            open={props.open}
+            onOpenChange={props.setOpen && props.setOpen}
+        >
             <Dialog.Portal>
                 <Dialog.Overlay class={SIMPLE_OVERLAY} />
                 <div class={SIMPLE_DIALOG_POSITIONER}>
@@ -357,9 +362,11 @@ export const SimpleDialog: ParentComponent<{
                             <Dialog.Title>
                                 <SmallHeader>{props.title}</SmallHeader>
                             </Dialog.Title>
-                            <Dialog.CloseButton>
-                                <ModalCloseButton />
-                            </Dialog.CloseButton>
+                            <Show when={props.setOpen}>
+                                <Dialog.CloseButton>
+                                    <ModalCloseButton />
+                                </Dialog.CloseButton>
+                            </Show>
                         </div>
                         <Dialog.Description class="flex flex-col gap-4">
                             {props.children}

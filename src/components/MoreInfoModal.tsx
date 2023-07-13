@@ -4,11 +4,13 @@ import { DIALOG_CONTENT, DIALOG_POSITIONER, OVERLAY } from "./DetailsModal";
 import { ModalCloseButton, SmallHeader } from "./layout";
 import { ExternalLink } from "./layout/ExternalLink";
 import help from "~/assets/icons/help.svg";
+import { useI18n } from "~/i18n/context";
 
 export function FeesModal(props: { icon?: boolean }) {
+    const i18n = useI18n();
     return (
         <MoreInfoModal
-            title="What's with the fees?"
+            title={i18n.t("whats_with_the_fees")}
             linkText={
                 props.icon ? (
                     <img
@@ -17,23 +19,19 @@ export function FeesModal(props: { icon?: boolean }) {
                         class="w-[16px] h-[16px] cursor-pointer"
                     />
                 ) : (
-                    "Why?"
+                    i18n.t("why?")
                 )
             }
         >
             <p>
-                Mutiny is a self-custodial wallet. To initiate a lightning
-                payment we must open a lightning channel, which requires a
-                minimum amount and a setup fee.
+                {i18n.t("more_info_modal_p1")}
             </p>
             <p>
-                Future payments, both send and recieve, will only incur normal
-                network fees and a nominal service fee unless your channel runs
-                out of inbound capacity.
+                {i18n.t("more_info_modal_p2")}
             </p>
             <p>
                 <ExternalLink href="https://github.com/MutinyWallet/mutiny-web/wiki/Understanding-liquidity">
-                    Learn more about liquidity
+                    {i18n.t("learn_more_about_liquidity")}
                 </ExternalLink>
             </p>
         </MoreInfoModal>
